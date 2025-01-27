@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirect to Roblox</title>
+    <script>
+        window.onload = function () {
+            document.addEventListener('contextmenu', function (e) {
+                e.preventDefault();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === "F12" || (e.ctrlKey && e.shiftKey && e.key === "I")) {
+                    e.preventDefault();
+                }
+            });
+            const devToolsChecker = setInterval(() => {
+                const devToolsOpened = /./;
+                devToolsOpened.toString = function () {
+                    this.opened = true;
+                };
+                console.log("%c", devToolsOpened);
+                if (devToolsOpened.opened) {
+                
+                    clearInterval(devToolsChecker);
+                }
+            }, 1000);
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const placeId = urlParams.get('placeId');
+            const gameInstanceId = urlParams.get('gameInstanceId');
+
+            const pcMessage = document.getElementById("pc-message");
+            const mobileMessage = document.getElementById("mobile-message");
+            const teleportLink = document.getElementById("teleport-link");
+
+            if (placeId && gameInstanceId) {
+                // Generate the robloxmobile link for mobile
+                const robloxMobileLink = `robloxmobile://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
+                
+                // Generate the roblox link for PC
+                const robloxPCLink = `roblox://placeID=${placeId}&gameInstanceId=${gameInstanceId}`;
+                teleportLink.href = `https://www.roblox.com/games/start?placeId=100579123867721&launchData=[${placeId}]/[${gameInstanceId}]`;
+
+                // Check if the user is on mobile or PC by checking the user agent
+                if (/Mobi|Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                    // Show the mobile message and redirect to the mobile version
+                    pcMessage.style.display = "none";
+                    mobileMessage.style.display = "block";
+                    window.location.href = robloxMobileLink;
+                } else {
+                    // Show the PC message and redirect to the PC version
+                    pcMessage.style.display = "block";
+                    mobileMessage.style.display = "none";
+                    window.location.href = robloxPCLink;
+                }
+            } else {
+                // If parameters are missing, show an error message
+                document.body.innerHTML = "<h1>Error: Missing placeId or gameInstanceId.</h1>";
+            }
+        };
+    </script>
+</head>
+<body>
+    <div id="pc-message" style="display: none;">
+        <p>Redirecting to Roblox... If hindi ka na-redirect sa Roblox, refresh mo lang 'tong site or click ito: <a id="teleport-link" href="#">Teleport!</a></p>
+    </div>
+
+    <div id="mobile-message" style="display: none;">
+        <p>Redirecting to Roblox... If hindi ka na-redirect, i-refresh mo lang ang website na ito.</p>
+    </div>
+</body>
+</html>
